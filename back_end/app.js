@@ -1,11 +1,10 @@
 require('dotenv').config()
-// 'use strict';
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose")
 const ejs = require("ejs");
 const Post = require("./models/post")
-// const mongoose = require('mongoose');
 
 const http = require('http');
 const request = require('request');
@@ -19,7 +18,8 @@ let endpoint = process.env.COMPUTER_VISION_ENDPOINT
 let mongo_pw = process.env.DATABASE_PW
 let mongo_un = process.env.DATABASE_USERNAME
 let db_name = 'default'
-let host = 'host'
+let host = process.env.DB_HOST
+
 if (!subscriptionKey) { throw new Error('Set your environment variables for your subscription key and endpoint.'); }
 
 
@@ -37,13 +37,11 @@ if (!subscriptionKey) { throw new Error('Set your environment variables for your
 
 const app = express();
 
-
-//mongodb+srv://hackteam:<password>@cluster0.hs7ri.mongodb.net/<dbname>?retryWrites=true&w=majority'
+y'
 mongoose
   // .connect('mongodb+srv://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
   
-  // .connect('mongodb+srv://hackteam:ftQVVD6vTLruiuR2@cluster0.hs7ri.mongodb.net/default?retryWrites=true&w=majority')
-  .connect('mongodb+srv://hackteam:' + mongo_pw +'@cluster0.hs7ri.mongodb.net/' + db_name + '?retryWrites=true&w=majority')
+ .connect('mongodb+srv://'+ mongo_pw + ':' + mongo_pw +'@' + host + '/' + db_name + '?retryWrites=true&w=majority')
   
   .then(() => {
     console.log('database connected')
