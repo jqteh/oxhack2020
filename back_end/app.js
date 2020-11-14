@@ -4,20 +4,18 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose")
 const ejs = require("ejs");
-const Post = require("./models/post")
-
 const http = require('http');
 const request = require('request');
-const { send } = require('process');
+const send = require('process');
 
 const hostname = '127.0.0.1';
-const port = 5000;
+const port = 5117;
 
 let subscriptionKey = process.env.COMPUTER_VISION_SUBSCRIPTION_KEY
 let endpoint = process.env.COMPUTER_VISION_ENDPOINT
-let mongo_pw = process.env.DATABASE_PW
-let mongo_un = process.env.DATABASE_USERNAME
-let db_name = 'default'
+let mongo_pw = process.env.DB_PW
+let mongo_un = process.env.DB_UN
+let db_name = process.env.DB_NAME
 let host = process.env.DB_HOST
 
 if (!subscriptionKey) { throw new Error('Set your environment variables for your subscription key and endpoint.'); }
@@ -37,10 +35,18 @@ if (!subscriptionKey) { throw new Error('Set your environment variables for your
 
 const app = express();
 
+const db_url = 'mongodb+srv://'+ mongo_un + ':' + mongo_pw +'@' + host + '/' + db_name //+ '?retryWrites=true&w=majority'
+
+const latexSc = new mongoose.Schema({
+  latex: String,
+})
+const Equation = mongoose.model("Equation", latexSc)
+
+
 mongoose
   // .connect('mongodb+srv://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
   
- .connect('mongodb+srv://'+ mongo_pw + ':' + mongo_pw +'@' + host + '/' + db_name + '?retryWrites=true&w=majority')
+ .connect(db_url, {useNewUrlParser: true})
   
   .then(() => {
     console.log('database connected')
@@ -69,7 +75,7 @@ app.listen(port, () => {
 
 app.route('/retrieve/all')
 .get(function(req,res) {
-  Post.find().then((docs) => {
+  Equation.find().then((docs) => {
     res.status(200).json({
       message: docs,
     })
@@ -78,7 +84,7 @@ app.route('/retrieve/all')
 
 app.route('retrieve/id/:id')
 .get(function(req, res) {
-  Post.findById(req.params.id).then((doc) => {
+  Equation.findById(req.params.id).then((doc) => {
     res.status(200).json({
       message: doc,
     })
@@ -112,13 +118,12 @@ app.route('/process/byurl')
   // POST THE DATA TO DATABASE
 
 
-  var data = { title: '0', content: '0' }
-
-  const post = new Post({ 
-    title: data.title,
-    content: data.content,
+  const equation = new Equation({
+    latex: '4x + 2 = 3'
   })
-  post.save()
+  equation.save((e) => {
+    res.status(501).json({message: 'error'}).redirect('/')
+  })
   res.status(201).json({ 
     message: 'data retrieved and stored succesfully'
   })
@@ -151,8 +156,8 @@ function process_image_by_url(url) {
     }
 
     const req_id = response.headers['apim-request-id']
-
-    try_get(req_id)
+    
+    setTimeout(try_get, req_id, 100);
   });
 }
 
@@ -168,7 +173,7 @@ function try_get(id) {
     }
   }
 
-const TIME_OUT = 500
+const TIME_OUT = 3000
   
 request.get(req_url, req_opt, (error, response, body) => {
     let jsonResponse = JSON.parse(body);
