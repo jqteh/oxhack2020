@@ -65,18 +65,26 @@ app.listen(port, () => {
 
 app.route('/retrieve/all')
 .get(function(req,res) {
-  //  foo
+  Post.find().then((docs) => {
+    res.status(200).json({
+      message: docs,
+    })
+  })
 })
 
 app.route('retrieve/id/:id')
 .get(function(req, res) {
-  //  foo
+  Post.findById(req.params.id).then((doc) => {
+    res.status(200).json({
+      message: doc,
+    })
+  })
 })
 
 
 app.route('/process/byimg')
 .post(function(req, res){
-  //  todo
+
 })
 
 
