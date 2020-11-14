@@ -11,15 +11,18 @@ if (!subscriptionKey) {
     // console.log(subscriptionKey);
  }
 
-var uriBase = endpoint + 'vision/v3.1/analyze';
+var uriBase = endpoint + 'vision/v3.1/ocr'
+// var uriBase = endpoint + 'vision/v3.1/read/analyze'
+
 
 const imageUrl =
-    'https://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg';
+    // 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg';
+    'https://i.imgur.com/cAOBxEq.jpeg'
 
 // Request parameters.
 const params = {
-    'visualFeatures': 'Categories,Description,Color',
-    'details': '',
+    // 'visualFeatures': 'Categories,Description,Color',
+    // 'details': '',
     'language': 'en'
 };
 
@@ -41,4 +44,14 @@ request.post(options, (error, response, body) => {
   let jsonResponse = JSON.stringify(JSON.parse(body), null, '  ');
   console.log('JSON Response\n');
   console.log(jsonResponse);
+//   const req_id = response.headers['apim-request-id']
+
+
+//   request.get(endpoint + 'vision/v3.1/read/analyzeResults/' + req_id, req_opt, (error, response, body) => {
+//     let jsonResponse = JSON.stringify(JSON.parse(body), null, '  ');
+//     console.log('JSON Response\n');
+//     console.log(jsonResponse);
+//   })
+//   request.get(endpoint + 'vision/v3.1/read/analyzeResults/' + req_id)
+  
 });

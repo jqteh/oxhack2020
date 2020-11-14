@@ -11,8 +11,8 @@ const request = require('request');
 const hostname = '127.0.0.1';
 const port = 3000;
 
-let subscriptionKey = process.env['dba95d6d1b7444b8a55b756c6b3dd390'];
-let endpoint = process.env['https://cv-oxhack.cognitiveservices.azure.com/']
+let subscriptionKey = process.env.COMPUTER_VISION_SUBSCRIPTION_KEY
+let endpoint = process.env.COMPUTER_VISION_ENDPOINT
 // if (!subscriptionKey) { throw new Error('Set your environment variables for your subscription key and endpoint.'); }
 
 var uriBase = endpoint + 'vision/v3.1/analyze';
@@ -58,12 +58,20 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
-app.route('/process/:imUrl')
+// app.route('/process/:imUrl')
+app.route('/process')
 
 .get(function(req, res) {
   const imurl = req.params.imUrl
-  process_image(imurl)
+
+
+  const imageUrl =
+    'https://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg';
+
+  console.log(imurl)
+  process_image(imageUrl)
 })
+
 
 function process_image(url) {
 
