@@ -3,7 +3,8 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
-import LatexConverter from "./LatexConverter";
+
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 function App() {
   const [notes, setNotes] = useState([]);
