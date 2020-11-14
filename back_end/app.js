@@ -12,13 +12,13 @@ const request = require('request');
 const { send } = require('process');
 
 const hostname = '127.0.0.1';
-const port = 3000;
+const port = 5000;
 
 let subscriptionKey = process.env.COMPUTER_VISION_SUBSCRIPTION_KEY
 let endpoint = process.env.COMPUTER_VISION_ENDPOINT
 let mongo_pw = process.env.DATABASE_PW
 let mongo_un = process.env.DATABASE_USERNAME
-let DB_NAME = 'DB'
+let db_name = 'default'
 let host = 'host'
 if (!subscriptionKey) { throw new Error('Set your environment variables for your subscription key and endpoint.'); }
 
@@ -37,13 +37,20 @@ if (!subscriptionKey) { throw new Error('Set your environment variables for your
 
 const app = express();
 
+
+//mongodb+srv://hackteam:<password>@cluster0.hs7ri.mongodb.net/<dbname>?retryWrites=true&w=majority'
 mongoose
-  .connect('mongodb://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
+  // .connect('mongodb+srv://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
+  
+  // .connect('mongodb+srv://hackteam:ftQVVD6vTLruiuR2@cluster0.hs7ri.mongodb.net/default?retryWrites=true&w=majority')
+  .connect('mongodb+srv://hackteam:' + mongo_pw +'@cluster0.hs7ri.mongodb.net/' + db_name + '?retryWrites=true&w=majority')
+  
   .then(() => {
     console.log('database connected')
   })
-  .catch(() => {
-    console.log('connection failed, err')
+  .catch((e) => {
+    console.log('database connection failed, error')
+    console.log(e)
   })
 app.get('/', (req, res) => {
   res.send('Server running')
@@ -84,13 +91,18 @@ app.route('retrieve/id/:id')
 
 app.route('/process/byimg')
 .post(function(req, res){
-
+  throw new Error('not impemented exception')
 })
 
 
 app.route('/process/byurl')
 .post(function(req, res) {
-  imageUrl = req.body.url 
+  var imageUrl = req.body.url 
+
+  // remove remove remove
+  imageUrl = 'https://i.imgur.com/aa2QCn3.jpeg' 
+  // test img
+
 
   console.log(imageUrl)
   process_image_by_url(imageUrl)
@@ -159,7 +171,7 @@ function try_get(id) {
     }
   }
 
-const TIME_OUT = 50
+const TIME_OUT = 500
   
 request.get(req_url, req_opt, (error, response, body) => {
     let jsonResponse = JSON.parse(body);
