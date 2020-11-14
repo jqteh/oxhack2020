@@ -17,7 +17,8 @@ var uriBase = endpoint + 'vision/v3.1/read/analyze'
 
 const imageUrl =
     // 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg';
-    'https://i.imgur.com/cAOBxEq.jpeg'
+    // 'https://i.imgur.com/cAOBxEq.jpeg'
+    'https://i.imgur.com/aa2QCn3.jpeg'
 
 // Request parameters.
 const params = {

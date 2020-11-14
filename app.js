@@ -2,17 +2,24 @@ require('dotenv').config()
 // 'use strict';
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose")
 const ejs = require("ejs");
+const Post = require("./models/post")
 // const mongoose = require('mongoose');
 
 const http = require('http');
 const request = require('request');
+const { send } = require('process');
 
 const hostname = '127.0.0.1';
 const port = 3000;
 
 let subscriptionKey = process.env.COMPUTER_VISION_SUBSCRIPTION_KEY
 let endpoint = process.env.COMPUTER_VISION_ENDPOINT
+let mongo_pw = process.env.DATABASE_PW
+let mongo_un = process.env.DATABASE_USERNAME
+let DB_NAME = 'DB'
+let host = 'host'
 if (!subscriptionKey) { throw new Error('Set your environment variables for your subscription key and endpoint.'); }
 
 
@@ -30,9 +37,19 @@ if (!subscriptionKey) { throw new Error('Set your environment variables for your
 
 const app = express();
 
+mongoose
+  .connect('mongodb://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
+  .then(() => {
+    console.log('database connected')
+  })
+  .catch(() => {
+    console.log('connection failed, err')
+  })
 app.get('/', (req, res) => {
   res.send('Server running')
 })
+
+
 
 app.set('view engine', 'ejs');
 
@@ -45,22 +62,53 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
-// app.route('/process/:imUrl')
-app.route('/process')
 
-.post(function(req, res) {
-  // const imurl = req.params.imUrl
-  imageUrl = req.body.url 
+app.route('/retrieve/all')
+.get(function(req,res) {
+  //  foo
+})
 
-  // const imageUrl =
-  //   'https://upload.wikimedia.org/wikipedia/commons/3/3c/Shaki_waterfall.jpg';
-
-  console.log(imageUrl)
-  process_image(imageUrl)
+app.route('retrieve/id/:id')
+.get(function(req, res) {
+  //  foo
 })
 
 
-function process_image(url) {
+app.route('/process/byimg')
+.post(function(req, res){
+  //  todo
+})
+
+
+app.route('/process/byurl')
+.post(function(req, res) {
+  imageUrl = req.body.url 
+
+  console.log(imageUrl)
+  process_image_by_url(imageUrl)
+
+ 
+  // GET DATA FROM API
+
+  // PROCESS THE DATA
+
+  // POST THE DATA TO DATABASE
+
+
+  var data = { title: '0', content: '0' }
+
+  const post = new Post({ 
+    title: data.title,
+    content: data.content,
+  })
+  post.save()
+  res.status(201).json({ 
+    message: 'data retrieved and stored succesfully'
+  })
+})
+
+
+function process_image_by_url(url) {
   const method = 'vision/v3.1/read/analyze'
   const uribase = endpoint + method
   
