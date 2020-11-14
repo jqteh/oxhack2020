@@ -32,7 +32,7 @@ function CreateArea(props) {
           onChange={handleChange}
           value={note.content}
           placeholder="Take a note..."
-          rows="3"
+          rows="1"
         />
         <button onClick={submitNote}>Add</button>
       </form>

@@ -23,29 +23,30 @@ function App() {
         return index !== id;
       });
     });
-  } 
+  }
+
 
   return (
     <div>
       <Header />
-      <CreateArea onAdd={addNote} />
-      {notes.map((noteItem, index) => {
-        return (
-          <Draggable handle="#imhandle">
-            <div className="note">
-              <span id="imhandle"><DragIndicatorIcon/></span>
-              <Note
-                key={index}
-                id={index}
-                content={noteItem.content}
-                onDelete={deleteNote}
-              />
-            </div>
-
-          </Draggable>
-
-        );
-      })}
+        <div className='canvas'>
+          <CreateArea onAdd={addNote} />
+          {notes.map((noteItem, index) => {
+            return (
+              <Draggable handle="#handle1" allowAnyClick='false' >
+                <div className="note">
+                  <span id="handle1"><DragIndicatorIcon /></span>
+                  <Note
+                    key={index}
+                    id={index}
+                    content={noteItem.content}
+                    onDelete={deleteNote}
+                  />
+                </div>
+              </Draggable>
+            );
+          })}
+        </div>
       <Footer />
     </div>
   );

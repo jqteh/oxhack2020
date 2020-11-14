@@ -9,6 +9,9 @@
   body {
     background: #eee;
     padding: 0 16px;
+    width: 2000px;
+    height: 1500px;
+    position: absolute;
   }
   
   header {
@@ -68,7 +71,14 @@
     cursor: pointer;
     outline: none;
   }
-  
+/* 
+  .canvas {
+    width: 3000px;
+    height: 1500px;
+    position: absolute;
+    left: -1000px;
+  } */
+
   form {
     position: relative;
     width: 480px;
