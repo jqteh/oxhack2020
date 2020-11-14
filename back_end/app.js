@@ -37,7 +37,6 @@ if (!subscriptionKey) { throw new Error('Set your environment variables for your
 
 const app = express();
 
-y'
 mongoose
   // .connect('mongodb+srv://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
   
