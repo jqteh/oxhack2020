@@ -3,6 +3,8 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Note from "./Note";
 import CreateArea from "./CreateArea";
+import Draggable from 'react-draggable';
+import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
@@ -21,7 +23,7 @@ function App() {
         return index !== id;
       });
     });
-  }
+  } 
 
   return (
     <div>
@@ -29,13 +31,19 @@ function App() {
       <CreateArea onAdd={addNote} />
       {notes.map((noteItem, index) => {
         return (
-          <Note
-            key={index}
-            id={index}
-            title={noteItem.title}
-            content={noteItem.content}
-            onDelete={deleteNote}
-          />
+          <Draggable handle="#imhandle">
+            <div className="note">
+              <span id="imhandle"><DragIndicatorIcon/></span>
+              <Note
+                key={index}
+                id={index}
+                content={noteItem.content}
+                onDelete={deleteNote}
+              />
+            </div>
+
+          </Draggable>
+
         );
       })}
       <Footer />
