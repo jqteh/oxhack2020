@@ -5,6 +5,7 @@ import Note from "./Note";
 import Draggable from 'react-draggable';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import axios from 'axios';
+import LatexConverter from './LatexConverter';
 
 function App() {
 
@@ -34,11 +35,12 @@ function App() {
   //     )
   // }
 
-  var dummyArray = ['test1', 'test2', 'test3'] //This is a dummy array in place of the array fetched from DB
+  var dummyArray = ['\\frac{1}{\\sqrt{2}}\\cdot 2', 'test2', 'test3'] //This is a dummy array in place of the array fetched from DB
 
   return (
     <div>
       <Header />
+      <LatexConverter/>
       {/* <p>{data.total}</p> */}
       <div className='canvas'>
         {/* <CreateArea onAdd={addNote} /> */}
@@ -50,7 +52,8 @@ function App() {
                 <Note
                   key={index}
                   id={index}
-                  content={noteItem}
+                  content={
+                    <LatexConverter content= {noteItem}/>}
                 // onDelete={deleteNote} //Only activate this when delete route in backend is configured. When ready, uncomment the deleteNote() from above
                 />
               </div>
