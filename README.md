@@ -15,4 +15,4 @@
 
 ## Key contributors
 
-Ben, Jay, Pawit, Will
+Ben, Jye, Pawit, Will
