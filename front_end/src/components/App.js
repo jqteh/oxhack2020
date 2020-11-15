@@ -6,6 +6,7 @@ import Draggable from 'react-draggable';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import axios from 'axios';
 import LatexConverter from './LatexConverter';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 function App() {
 
@@ -21,7 +22,7 @@ function App() {
     };
     fetchData(); //for this particular case, data.total is the item of interest. In our case, data.whatever should be in an array.
   }, []);
-  
+
   var latexArray = data.body;
 
   function deleteNote(id) {axios.delete(`/remove/id/${id}`) };
@@ -43,7 +44,7 @@ function App() {
           return (
             <Draggable handle="#handle1" key={item._id}>
               <div className="note">
-                <span id="handle1"><DragIndicatorIcon /></span>
+                <span id="handle1"><DragIndicatorIcon /></span><button><CancelIcon/></button>
                 <Note
                   key={item._id}
                   id={item._id}

@@ -1,4 +1,5 @@
 import React from "react";
+import CancelIcon from '@material-ui/icons/Cancel';
 
 function Note(props) {
   function handleClick() {
@@ -8,7 +9,7 @@ function Note(props) {
   return (
     <div>
       <p>{props.content}</p>
-      <button onClick={handleClick}>DELETE</button>
+      {/* <button onClick={handleClick}><CancelIcon/></button> */}
     </div>
   );
 }
