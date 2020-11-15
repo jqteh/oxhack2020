@@ -8,8 +8,10 @@ function Note(props) {
 
   return (
     <div>
-      <p>{props.content}</p>
-      {/* <button onClick={handleClick}><CancelIcon/></button> */}
+        <div>
+          <p>{props.content}</p>
+          <button onClick={handleClick}><CancelIcon /></button>
+        </div>
     </div>
   );
 }
