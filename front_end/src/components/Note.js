@@ -1,6 +1,5 @@
 import React from "react";
 import CancelIcon from '@material-ui/icons/Cancel';
-import Draggable from 'react-draggable';
 
 function Note(props) {
   function handleClick() {
