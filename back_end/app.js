@@ -33,7 +33,6 @@ mongoose
   // .connect('mongodb+srv://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
   
  .connect(db_url, {useNewUrlParser: true})
-  
   .then(() => {
     console.log('database connected')
   })
@@ -41,11 +40,13 @@ mongoose
     console.log('database connection failed, error')
     console.log(e)
   })
+
+
+// Server running
+
 app.get('/', (req, res) => {
   res.send('Server running')
 })
-
-
 
 app.set('view engine', 'ejs');
 
@@ -68,6 +69,9 @@ app.route('/remove/id/:id').delete((req, res, next) => {
     res.send(output === 1 ? {message: 'deletion succesful'} : {message: 'error encountered'})
   })
 })
+
+
+/////// ROUTING //////
 
 // GET ALL
 app.route('/retrieve/all')
@@ -134,12 +138,6 @@ app.route('/process/byurl')
   console.log(imageUrl)
   const data_retrieved = segment_image_by_url(imageUrl)
 
- 
-  // GET DATA FROM API
-
-  // PROCESS THE DATA
-
-  // POST THE DATA TO DATABASE
 
   const eqns = process_json_eqns(data_retrieved)
 
