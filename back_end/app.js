@@ -5,6 +5,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const request = require('request');
+const promise = require("promise")
+
 
 const hostname = '127.0.0.1';
 const port = 5117;
@@ -18,7 +20,7 @@ let host = process.env.DB_HOST;
 
 const app = express();
 
-const db_url = 'mongodb+srv://'+ mongo_un + ':' + mongo_pw +'@' + host + '/' + db_name //+ '?retryWrites=true&w=majority'
+const db_url = 'mongodb+srv://' + mongo_un + ':' + mongo_pw + '@' + host + '/' + db_name //+ '?retryWrites=true&w=majority'
 
 const latexSc = new mongoose.Schema({
   latex: String,
@@ -28,8 +30,8 @@ const Equation = mongoose.model("Equation", latexSc)
 
 mongoose
   // .connect('mongodb+srv://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
-  
- .connect(db_url, {useNewUrlParser: true})
+
+  .connect(db_url, { useNewUrlParser: true })
   .then(() => {
     console.log('database connected')
   })
@@ -62,9 +64,9 @@ app.delete('/remove/id/:elid', (req, res, next) => {
   // delete request received
   Equation.findByIdAndDelete(req.params.elid, (err, output) => {
     if (err) {
-      res.send({message: 'could not delete'})
+      res.send({ message: 'could not delete' })
     } else {
-      res.send({message: 'succesful'})
+      res.send({ message: 'succesful' })
     }
   }).catch((e) => {
     res.send(e)
@@ -76,110 +78,90 @@ app.delete('/remove/id/:elid', (req, res, next) => {
 
 // GET ALL
 app.route('/retrieve/all')
-.get(function(req,res) {
-  Equation.find().then((body) => {
-    res.status(200).json({
-      body,
+  .get(function (req, res) {
+    Equation.find().then((body) => {
+      res.status(200).json({
+        body,
+      })
     })
   })
-})
 
 
 // GET
 app.route('/retrieve/id/:elid')
-.get(function(req, res) {
-  // if params.id.
-  Equation.findById(req.params.elid)
-  .then((body) => {
-    res.status(200).json({
-      body,
-    })
+  .get(function (req, res) {
+    // if params.id.
+    Equation.findById(req.params.elid)
+      .then((body) => {
+        res.status(200).json({
+          body,
+        })
+      })
+      .catch((e) => {
+        res.status(404).json({ message: 'id not in db' })
+      })
   })
-  .catch((e) => {
-    res.status(404).json({message: 'id not in db'})
-  })
-})
 
 
 app.route('/process/byimg')
-.post(function(req, res){
-  
-  const options = {
-    uri: uribase,
-    qs: params,
-    headers: {
+  .post(function (req, res) {
+
+    const options = {
+      uri: uribase,
+      qs: params,
+      headers: {
         'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key' : subscriptionKey
-    },
-    body: req.body
-  };
-  request.post(options, (err, res, body) => {
+        'Ocp-Apim-Subscription-Key': subscriptionKey
+      },
+      body: req.body
+    };
+    request.post(options, (err, res, body) => {
 
-    if (err) {
-      console.log(err)
-      return
-    }
-    const req_id = res.headers['apim-request-id']
-    
-    setTimeout(try_get, req_id, 100);
+      if (err) {
+        console.log(err)
+        return
+      }
+      const req_id = res.headers['apim-request-id']
+
+      setTimeout(try_get, req_id, 100);
+    })
   })
 
-  
-})
 
+app.post('process/byjson', function (req, res) {
 
-app.route('process/byjson')
-.post(function(req, res) {
-  processed_data = process_ocr_res(req.body.data)
+  if (!body) {
+    res.send({body: 'error: no body'}).end()
+  } else {
+    res.send({body: 'received'}).end()
+  }
 
-  // DO PROCESSING
-
-
-
-  const equation = new Equation({
-    latex: '4x + 2 = 3'
-  })
-  equation.save((e) => {
-    res.status(501).json({message: 'error'}).redirect('/')
-  })
-  res.status(201).json({ 
-    message: 'data retrieved and stored succesfully'
+  process_ocr_res(req.body.data).then((d) => {
+    d.save()
   })
 })
 
 app.route('/process/byurl')
-.post(function(req, res) {
-  var imageUrl = req.body.url 
+  .post(function (req, res) {
+    const imageUrl = req.body.url
 
-  // remove remove remove
-  // imageUrl = 'https://i.imgur.com/aa2QCn3.jpeg' 
-  // test img
+    res.send({body: 'request received'}).end()
 
-
-  console.log(imageUrl)
-  const data_retrieved = segment_image_by_url(imageUrl)
-
-
-  const eqns = process_json_eqns(data_retrieved)
-
-  // figure out how to put data into this? =>
-
-  // const equation = new Equation({
-  //   latex: '4x + 2 = 3'
-  // })
-  eqns.save((e) => {
-    res.status(501).json({message: 'error'}).redirect('/')
+    segment_image_by_url(imageUrl).then((rd) => {
+      process_read_res(rd)
+    }).then((final_data) => {
+      final_data.save()
+    }).catch((e) => {
+        console.log(e)
+      })
   })
-  res.status(201).json({ 
-    message: 'data retrieved and stored succesfully'
-  })
-})
+
 
 
 function segment_image_by_url(url) {
   const method = 'vision/v3.1/read/analyze'
   const uribase = endpoint + method
-  
+
   // set language
   const params = {
     'language': 'en'
@@ -190,8 +172,8 @@ function segment_image_by_url(url) {
     qs: params,
     body: '{"url": ' + '"' + url + '"}',
     headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key' : subscriptionKey
+      'Content-Type': 'application/json',
+      'Ocp-Apim-Subscription-Key': subscriptionKey
     }
   };
 
@@ -202,7 +184,7 @@ function segment_image_by_url(url) {
     }
 
     const req_id = response.headers['apim-request-id']
-    
+
     setTimeout(try_get, req_id, 200);
   });
 }
@@ -210,30 +192,34 @@ function segment_image_by_url(url) {
 function try_get(id) {
   req_url = endpoint + 'vision/v3.1/read/analyzeResults/' + id
 
-  const req_opt = { 
-      qs: '',
-      body: '',
-      headers: {
-        'Content-Type': 'application/json',
-        'Ocp-Apim-Subscription-Key': subscriptionKey
+  const req_opt = {
+    qs: '',
+    body: '',
+    headers: {
+      'Content-Type': 'application/json',
+      'Ocp-Apim-Subscription-Key': subscriptionKey
     }
   }
 
-const TIME_OUT = 1500
-  
-request.get(req_url, req_opt, (error, response, body) => {
+  const TIME_OUT = 1500
+
+  request.get(req_url, req_opt, (error, response, body) => {
     let jsonResponse = JSON.parse(body);
     if (jsonResponse['status'] == 'running') {
-        setTimeout(try_get, id, TIME_OUT);
+      setTimeout(try_get, id, TIME_OUT);
     } else {
-        console.log('JSON Response\n');
-        console.log(JSON.stringify(jsonResponse));
+      // request succesful
+      process_read_res.then((data) => {
+        data.save()
+      }).catch((e) => {
+        console.log(e)
+      })
     }
   })
 }
 
-function process_json_eqns(data) {
-  
+function process_read_res(data) {
+
   throw new Error()
 
 }
@@ -247,13 +233,13 @@ function process_ocr_res(data) {
     var isLastCharNum = false
     if (typeof element === String) {
       if (typeof char != undefined) {
-        if ( !isNaN(char - parseFloat(char))) {
-            // if last character is a letter
-            // followed immediately by a number
-            // insert a ^ between
+        if (!isNaN(char - parseFloat(char))) {
+          // if last character is a letter
+          // followed immediately by a number
+          // insert a ^ between
 
-            // idk what I am doing
-            isLastCharNum = true
+          // idk what I am doing
+          isLastCharNum = true
         }
       }
     }
@@ -261,5 +247,5 @@ function process_ocr_res(data) {
 
   return processed_data
 
-  
+
 }
