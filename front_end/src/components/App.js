@@ -35,7 +35,7 @@ function App() {
   //     )
   // }
 
-  var dummyArray = ['\\frac{1}{\\sqrt{2}}\\cdot 2', 'test2', 'test3'] //This is a dummy array in place of the array fetched from DB
+  var dummyArray = ['\\int y \\mathrm{d}x', 'k_{n+1} = n^2 + k_n^2 - k_{n-1}', '\\overrightarrow{AB}'] //This is a dummy array in place of the array fetched from DB
 
   return (
     <div>
