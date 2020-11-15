@@ -60,9 +60,9 @@ app.listen(port, () => {
   console.log(`hAckPI listening at http://localhost:${port}`)
 })
 
-app.route('/remove/id/:id').delete((req, res, next) => {
+app.route('/remove/id/:elid').delete((req, res, next) => {
   // delete request received
-  req.collection.removeById(req.params.id, (err, output) => {
+  req.collection.removeById(req.params.elid, (err, output) => {
     if (err) {
       return next(err)
     } 
@@ -102,8 +102,17 @@ app.route('/retrieve/id/:elid')
 
 app.route('/process/byimg')
 .post(function(req, res){
-  req.body.pipe()
-  throw new Error('not impemented exception')
+  
+  const options = {
+    uri: uribase,
+    qs: params,
+    headers: {
+        'Content-Type': 'application/json',
+        'Ocp-Apim-Subscription-Key' : subscriptionKey
+    },
+    body: req.body
+  };
+  request.post(options)
 })
 
 
