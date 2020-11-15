@@ -130,7 +130,7 @@ app.route('/process/byimg')
 
 app.route('process/byjson')
 .post(function(req, res) {
-  processed_data = process_json_eqns(req.body.data)
+  processed_data = process_ocr_res(req.body.data)
 
   // DO PROCESSING
 
@@ -203,7 +203,7 @@ function segment_image_by_url(url) {
 
     const req_id = response.headers['apim-request-id']
     
-    setTimeout(try_get, req_id, 100);
+    setTimeout(try_get, req_id, 200);
   });
 }
 
@@ -219,7 +219,7 @@ function try_get(id) {
     }
   }
 
-const TIME_OUT = 3000
+const TIME_OUT = 1500
   
 request.get(req_url, req_opt, (error, response, body) => {
     let jsonResponse = JSON.parse(body);
@@ -236,5 +236,30 @@ function process_json_eqns(data) {
   
   throw new Error()
 
+}
 
+function process_ocr_res(data) {
+  var processed_data = {
+    line: data.map(o => o.words.text)
+  }
+
+  processed_data.array.forEach(element => {
+    var isLastCharNum = false
+    if (typeof element === String) {
+      if (typeof char != undefined) {
+        if ( !isNaN(char - parseFloat(char))) {
+            // if last character is a letter
+            // followed immediately by a number
+            // insert a ^ between
+
+            // idk what I am doing
+            isLastCharNum = true
+        }
+      }
+    }
+  });
+
+  return processed_data
+
+  
 }
