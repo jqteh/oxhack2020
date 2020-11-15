@@ -76,9 +76,9 @@ app.route('/remove/id/:elid').delete((req, res, next) => {
 // GET ALL
 app.route('/retrieve/all')
 .get(function(req,res) {
-  Equation.find().then((docs) => {
+  Equation.find().then((body) => {
     res.status(200).json({
-      message: docs,
+      body,
     })
   })
 })
@@ -89,9 +89,9 @@ app.route('/retrieve/id/:elid')
 .get(function(req, res) {
   // if params.id.
   Equation.findById(req.params.elid)
-  .then((doc) => {
+  .then((body) => {
     res.status(200).json({
-      message: doc,
+      body,
     })
   })
   .catch((e) => {
