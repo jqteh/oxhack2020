@@ -10,4 +10,4 @@
 **...?**
 **profit**
 
-*requires a mongodb database, and azure computer vision endpoint and auth key.
+*requires a mongodb database, and azure computer vision endpoint and auth key in a dot env
