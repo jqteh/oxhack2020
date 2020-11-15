@@ -9,52 +9,47 @@ import LatexConverter from './LatexConverter';
 
 function App() {
 
-  const [data, setData] = useState({ total: null }); //data will contain the array fetched from DB
+  const [data, setData] = useState({ body: [] }); //data will contain the array fetched from DB
+
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios(
-        'https://api.npms.io/v2/search?q=react', //Replace this link with the get route from DB, to obtain an array
+        '/retrieve/all', //Replace this link with the get route from DB, to obtain an array
       );
       setData(result.data);
       setTimeout(fetchData, 3000);
     };
     fetchData(); //for this particular case, data.total is the item of interest. In our case, data.whatever should be in an array.
   }, []);
+  
+  var latexArray = data.body;
 
-  //console.log(data.total); //data.total is the first item in this particular JSON file
+  function deleteNote(id) {axios.delete(`/remove/id/${id}`) };
 
-    // function deleteNote(id) {
-  //   axios
-  //     .delete(`/deleteRoute/${id}`)
-  //     .then(
-  //       setData((prevNotes)=>{
-  //         return {
-  //           notes: prevNotes.notes.filter(note=>note.id != id)
-  //         }
-  //       })
-  //     )
-  // }
 
-  var dummyArray = ['\\int y \\mathrm{d}x', 'k_{n+1} = n^2 + k_n^2 - k_{n-1}', '\\overrightarrow{AB}'] //This is a dummy array in place of the array fetched from DB
+
+
+  //var dummyArray = ['\\int y \\mathrm{d}x', 'k_{n+1} = n^2 + k_n^2 - k_{n-1}', '\\overrightarrow{AB}']; //This is a dummy array in place of the array fetched from DB
+
+  console.log(latexArray);
 
   return (
     <div>
       <Header />
-      <LatexConverter/>
-      {/* <p>{data.total}</p> */}
+      <LatexConverter />
       <div className='canvas'>
         {/* <CreateArea onAdd={addNote} /> */}
-        {dummyArray.map((noteItem, index) => {
+        {latexArray.map((item, index) => {
           return (
-            <Draggable handle="#handle1" >
+            <Draggable handle="#handle1" key={item._id}>
               <div className="note">
                 <span id="handle1"><DragIndicatorIcon /></span>
                 <Note
-                  key={index}
-                  id={index}
+                  key={item._id}
+                  id={item._id}
                   content={
-                    <LatexConverter content= {noteItem}/>}
-                // onDelete={deleteNote} //Only activate this when delete route in backend is configured. When ready, uncomment the deleteNote() from above
+                    <LatexConverter content={item.latex} />}
+                  onDelete={deleteNote} //Only activate this when delete route in backend is configured. When ready, uncomment the deleteNote() from above
                 />
               </div>
             </Draggable>

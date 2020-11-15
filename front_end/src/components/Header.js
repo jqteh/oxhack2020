@@ -1,9 +1,10 @@
 import React from "react";
+import LogoText from '../assets/snap-text-01.png';
 
 function Header() {
   return (
     <header>
-      <h1>Oxhack Note</h1>
+      <img src={LogoText} alt='Logo text' className='LogoText'/>
     </header>
   );
 }
