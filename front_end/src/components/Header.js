@@ -1,5 +1,5 @@
 import React from "react";
-import LogoText from '../assets/snap-text-01.png';
+import LogoText from '../assets/Artboard_2.svg';
 
 function Header() {
   return (

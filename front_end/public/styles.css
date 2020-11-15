@@ -9,8 +9,8 @@
   body {
     background: #eee;
     padding: 0 16px;
-    width: 2000px;
-    height: 1500px;
+    width: 100%;
+    height: 980px;
     position: absolute;
   }
   
@@ -106,7 +106,7 @@
     position: absolute;
     right: 18px;
     bottom: -18px;
-    background: #706897;
+    background: #1c2b2d;
     color: #fff;
     border: none;
     border-radius: 50%;
