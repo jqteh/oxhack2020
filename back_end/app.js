@@ -5,8 +5,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const request = require('request');
-const promise = require("promise")
-
+const { json } = require('express');
+// const promise = require("promise")
+// const q = require('q')
 
 const hostname = '127.0.0.1';
 const port = 5117;
@@ -147,13 +148,7 @@ app.route('/process/byurl')
 
     res.send({body: 'request received'}).end()
 
-    segment_image_by_url(imageUrl).then((rd) => {
-      process_read_res(rd)
-    }).then((final_data) => {
-      final_data.save()
-    }).catch((e) => {
-        console.log(e)
-      })
+    segment_image_by_url(imageUrl)
   })
 
 
@@ -178,19 +173,21 @@ function segment_image_by_url(url) {
   };
 
   request.post(options, (error, response, body) => {
-    if (error) {
-      console.log('Error: ', error);
-      return;
+
+    if (response.statusCode === 202) {
+
+      const req_id = response.headers['apim-request-id']
+
+      setTimeout(try_get, 200, req_id);
+    } else { 
+      console.log(response.statusCode + ' error bad request')
     }
-
-    const req_id = response.headers['apim-request-id']
-
-    setTimeout(try_get, req_id, 200);
-  });
+  })
+  
 }
 
-function try_get(id) {
-  req_url = endpoint + 'vision/v3.1/read/analyzeResults/' + id
+async function try_get(req_id) {
+  req_url = endpoint + 'vision/v3.1/read/analyzeResults/' + req_id
 
   const req_opt = {
     qs: '',
@@ -204,24 +201,38 @@ function try_get(id) {
   const TIME_OUT = 1500
 
   request.get(req_url, req_opt, (error, response, body) => {
+
     let jsonResponse = JSON.parse(body);
-    if (jsonResponse['status'] == 'running') {
-      setTimeout(try_get, id, TIME_OUT);
-    } else {
-      // request succesful
-      process_read_res.then((data) => {
+
+    if (jsonResponse['status'] === 'succeeded') {
+
+      process_read_res(jsonResponse.body).then((data) => {
         data.save()
       }).catch((e) => {
         console.log(e)
       })
+
+    } else if (!jsonResponse['status'] || jsonResponse['status'] === 'error') {
+
+      console.log(jsonResponse['status'])
+      throw new Error()
+
+    } else {
+
+      setTimeout(try_get, TIME_OUT, req_id);
+
     }
+  }).catch((e) => {})
+};
+
+async function process_read_res(data) {
+  return new Promise(resolve => {
+    var processed_data = data
+    // throw new Error()
+    return processed_data;
+    // resolve(processed_data)
   })
-}
-
-function process_read_res(data) {
-
-  throw new Error()
-
+  
 }
 
 function process_ocr_res(data) {
@@ -234,18 +245,15 @@ function process_ocr_res(data) {
     if (typeof element === String) {
       if (typeof char != undefined) {
         if (!isNaN(char - parseFloat(char))) {
-          // if last character is a letter
-          // followed immediately by a number
-          // insert a ^ between
-
-          // idk what I am doing
           isLastCharNum = true
         }
       }
     }
+
+    
   });
 
-  return processed_data
-
-
+  return new Promise(resolve => {
+    resolve(processed_data)
+  })
 }
