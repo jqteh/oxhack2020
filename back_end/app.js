@@ -5,9 +5,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const request = require('request');
-const { json } = require('express');
-// const promise = require("promise")
-// const q = require('q')
 
 const hostname = '127.0.0.1';
 const port = 5117;
@@ -21,18 +18,19 @@ let host = process.env.DB_HOST;
 
 const app = express();
 
-const db_url = 'mongodb+srv://' + mongo_un + ':' + mongo_pw + '@' + host + '/' + db_name //+ '?retryWrites=true&w=majority'
 
+// Construct MongoDB url
+const db_url = 'mongodb+srv://' + mongo_un + ':' + mongo_pw + '@' + host + '/' + db_name
+
+// Mongo model
 const latexSc = new mongoose.Schema({
   latex: String,
 })
 const Equation = mongoose.model("Equation", latexSc)
 
 
-mongoose
-  // .connect('mongodb+srv://'+ mongo_un + ':'+ mongo_pw + '@'+host+'/'+DB_NAME+'+?ssl=true&replicaSet=atlas-qlljxs-shard-0&authSource=admin&retryWrites=true&w=majority')
-
-  .connect(db_url, { useNewUrlParser: true })
+// Connect to DB
+mongoose.connect(db_url, { useNewUrlParser: true })
   .then(() => {
     console.log('database connected')
   })
@@ -60,6 +58,14 @@ app.listen(port, () => {
   console.log(`hAckPI listening at http://localhost:${port}`)
 })
 
+// SERVER NODES
+
+// DELETE: /remove/id/:elid // DELETE ekement matching id in db
+// GET: /retrieve/all // get all elements in db
+// GET: /retrieve/id/:elid // get element of id
+// POST: /process/byimg // process img from binary in body
+// POST: /process/byjson // process img from json
+// POST: /process/byurl // process img with url posted in body { url: imurl }
 
 app.delete('/remove/id/:elid', (req, res, next) => {
   // delete request received
@@ -89,8 +95,7 @@ app.route('/retrieve/all')
 
 
 // GET
-app.route('/retrieve/id/:elid')
-  .get(function (req, res) {
+app.get('/retrieve/id/:elid', function (req, res) {
     // if params.id.
     Equation.findById(req.params.elid)
       .then((body) => {
@@ -104,8 +109,7 @@ app.route('/retrieve/id/:elid')
   })
 
 
-app.route('/process/byimg')
-  .post(function (req, res) {
+app.post('/process/byimg', function (req, res) {
 
     const options = {
       uri: uribase,
@@ -142,8 +146,7 @@ app.post('process/byjson', function (req, res) {
   })
 })
 
-app.route('/process/byurl')
-  .post(function (req, res) {
+app.post('/process/byurl', function (req, res) {
     const imageUrl = req.body.url
 
     res.send({body: 'request received'}).end()
