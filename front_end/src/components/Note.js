@@ -1,5 +1,6 @@
 import React from "react";
 import CancelIcon from '@material-ui/icons/Cancel';
+import Draggable from 'react-draggable';
 
 function Note(props) {
   function handleClick() {
@@ -8,8 +9,10 @@ function Note(props) {
 
   return (
     <div>
-      <p>{props.content}</p>
-      {/* <button onClick={handleClick}><CancelIcon/></button> */}
+        <div>
+          <p>{props.content}</p>
+          <button onClick={handleClick}><CancelIcon /></button>
+        </div>
     </div>
   );
 }
