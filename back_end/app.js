@@ -91,6 +91,7 @@ app.route('retrieve/id/:id')
 
 app.route('/process/byimg')
 .post(function(req, res){
+  req.body.pipe()
   throw new Error('not impemented exception')
 })
 
