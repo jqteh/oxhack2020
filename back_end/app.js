@@ -3,10 +3,10 @@ require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose")
-const ejs = require("ejs");
-const http = require('http');
+// const ejs = require("ejs");
+// const http = require('http');
 const request = require('request');
-const send = require('process');
+// const send = require('process');
 
 const hostname = '127.0.0.1';
 const port = 5117;
@@ -19,19 +19,6 @@ let db_name = process.env.DB_NAME
 let host = process.env.DB_HOST
 
 if (!subscriptionKey) { throw new Error('Set your environment variables for your subscription key and endpoint.'); }
-
-
-
-// const server = http.createServer((req, res) => {
-//   res.statusCode = 200;
-//   res.setHeader('Content-Type', 'text/plain');
-//   res.end('Hello World');
-// });
-
-// server.listen(port, hostname, () => {
-//   console.log(`Server running at http://${hostname}:${port}/`);
-// });
-
 
 const app = express();
 
@@ -66,12 +53,22 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
 app.use(express.static("public"));
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`hAckPI listening at http://localhost:${port}`)
 })
 
+app.route('/remove/id/:id').delete((req, res, next) => {
+  // delete request received
+  req.collection.removeById(req.params.id, (err, output) => {
+    if (err) {
+      return next(err)
+    } 
+    res.send(output === 1 ? {message: 'deletion succesful'} : {message: 'error encountered'})
+  })
+})
 
 app.route('/retrieve/all')
 .get(function(req,res) {
@@ -98,24 +95,12 @@ app.route('/process/byimg')
 })
 
 
-app.route('/process/byurl')
+app.route('process/byjson')
 .post(function(req, res) {
-  var imageUrl = req.body.url 
+  processed_data = process_json_eqns(req.body.data)
 
-  // remove remove remove
-  imageUrl = 'https://i.imgur.com/aa2QCn3.jpeg' 
-  // test img
+  // DO PROCESSING
 
-
-  console.log(imageUrl)
-  process_image_by_url(imageUrl)
-
- 
-  // GET DATA FROM API
-
-  // PROCESS THE DATA
-
-  // POST THE DATA TO DATABASE
 
 
   const equation = new Equation({
@@ -129,8 +114,42 @@ app.route('/process/byurl')
   })
 })
 
+app.route('/process/byurl')
+.post(function(req, res) {
+  var imageUrl = req.body.url 
 
-function process_image_by_url(url) {
+  // remove remove remove
+  // imageUrl = 'https://i.imgur.com/aa2QCn3.jpeg' 
+  // test img
+
+
+  console.log(imageUrl)
+  const data_retrieved = segment_image_by_url(imageUrl)
+
+ 
+  // GET DATA FROM API
+
+  // PROCESS THE DATA
+
+  // POST THE DATA TO DATABASE
+
+  const eqns = process_json_eqns(data_retrieved)
+
+  // figure out how to put data into this? =>
+
+  // const equation = new Equation({
+  //   latex: '4x + 2 = 3'
+  // })
+  eqns.save((e) => {
+    res.status(501).json({message: 'error'}).redirect('/')
+  })
+  res.status(201).json({ 
+    message: 'data retrieved and stored succesfully'
+  })
+})
+
+
+function segment_image_by_url(url) {
   const method = 'vision/v3.1/read/analyze'
   const uribase = endpoint + method
   
@@ -186,5 +205,7 @@ request.get(req_url, req_opt, (error, response, body) => {
   })
 }
 
-
-
+function process_json_eqns(data) {
+  throw new Error('not implemented')
+  return data
+}
