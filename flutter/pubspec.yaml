@@ -1,0 +1,35 @@
+name: oxhack
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.0
+  http: ^0.12.2
+  mongo_dart: ^0.4.4
+  
+  image_picker: ^0.6.7+11
+  clipboard: ^0.1.2+8
+
+  camera: ^0.5.6+1
+  path_provider: ^1.6.24
+  path: ^1.7.0
+  progress_dialog: ^1.2.4
+  flutter_dotenv: ^2.1.0
+
+  flutter_svg: ^0.19.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env
+    - assets/snap-logo.png
+    - assets/snap-text.png
