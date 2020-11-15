@@ -4,10 +4,7 @@ require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-// const ejs = require("ejs");
-// const http = require('http');
 const request = require('request');
-// const send = require('process');
 
 const hostname = '127.0.0.1';
 const port = 5117;
@@ -60,13 +57,17 @@ app.listen(port, () => {
   console.log(`hAckPI listening at http://localhost:${port}`)
 })
 
-app.route('/remove/id/:elid').delete((req, res, next) => {
+
+app.delete('/remove/id/:elid', (req, res, next) => {
   // delete request received
-  req.collection.removeById(req.params.elid, (err, output) => {
+  Equation.findByIdAndDelete(req.params.elid, (err, output) => {
     if (err) {
-      return next(err)
-    } 
-    res.send(output === 1 ? {message: 'deletion succesful'} : {message: 'error encountered'})
+      res.send({message: 'could not delete'})
+    } else {
+      res.send({message: 'succesful'})
+    }
+  }).catch((e) => {
+    res.send(e)
   })
 })
 
@@ -112,7 +113,18 @@ app.route('/process/byimg')
     },
     body: req.body
   };
-  request.post(options)
+  request.post(options, (err, res, body) => {
+
+    if (err) {
+      console.log(err)
+      return
+    }
+    const req_id = res.headers['apim-request-id']
+    
+    setTimeout(try_get, req_id, 100);
+  })
+
+  
 })
 
 
@@ -185,7 +197,7 @@ function segment_image_by_url(url) {
 
   request.post(options, (error, response, body) => {
     if (error) {
-      console.log('Error: ', error);nod
+      console.log('Error: ', error);
       return;
     }
 
