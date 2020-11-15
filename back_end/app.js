@@ -1,8 +1,8 @@
-require('dotenv').config()
+require('dotenv').config({ path: 'back_end/.env'})
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 // const ejs = require("ejs");
 // const http = require('http');
 const request = require('request');
@@ -11,14 +11,12 @@ const request = require('request');
 const hostname = '127.0.0.1';
 const port = 5117;
 
-let subscriptionKey = process.env.COMPUTER_VISION_SUBSCRIPTION_KEY
-let endpoint = process.env.COMPUTER_VISION_ENDPOINT
-let mongo_pw = process.env.DB_PW
-let mongo_un = process.env.DB_UN
-let db_name = process.env.DB_NAME
-let host = process.env.DB_HOST
-
-if (!subscriptionKey) { throw new Error('Set your environment variables for your subscription key and endpoint.'); }
+let subscriptionKey = process.env.COMPUTER_VISION_SUBSCRIPTION_KEY;
+let endpoint = process.env.COMPUTER_VISION_ENDPOINT;
+let mongo_pw = process.env.DB_PW;
+let mongo_un = process.env.DB_UN;
+let db_name = process.env.DB_NAME;
+let host = process.env.DB_HOST;
 
 const app = express();
 
@@ -70,6 +68,7 @@ app.route('/remove/id/:id').delete((req, res, next) => {
   })
 })
 
+// GET ALL
 app.route('/retrieve/all')
 .get(function(req,res) {
   Equation.find().then((docs) => {
@@ -79,9 +78,11 @@ app.route('/retrieve/all')
   })
 })
 
+
+// GET
 app.route('retrieve/id/:id')
 .get(function(req, res) {
-  Equation.findById(req.params.id).then((doc) => {
+  Equation.findById(req.params._id).then((doc) => {
     res.status(200).json({
       message: doc,
     })
