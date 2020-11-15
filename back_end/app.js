@@ -1,4 +1,5 @@
-require('dotenv').config({ path: 'back_end/.env'})
+// require('dotenv').config({ path: 'back_end/.env'})
+require('dotenv').config()
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -80,12 +81,17 @@ app.route('/retrieve/all')
 
 
 // GET
-app.route('retrieve/id/:id')
+app.route('/retrieve/id/:elid')
 .get(function(req, res) {
-  Equation.findById(req.params._id).then((doc) => {
+  // if params.id.
+  Equation.findById(req.params.elid)
+  .then((doc) => {
     res.status(200).json({
       message: doc,
     })
+  })
+  .catch((e) => {
+    res.status(404).json({message: 'id not in db'})
   })
 })
 
@@ -208,6 +214,8 @@ request.get(req_url, req_opt, (error, response, body) => {
 }
 
 function process_json_eqns(data) {
-  throw new Error('not implemented')
-  return data
+  
+  throw new Error()
+
+
 }
