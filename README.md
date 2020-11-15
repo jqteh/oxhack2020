@@ -10,4 +10,4 @@
 7. **...?**
 8. **profit**
 
-*_requires a mongodb database, and azure computer vision endpoint and auth key in a dot env_
+*_requires dotenv setup, an Azure Computer Vision endpoint, a MongoDB database and respective credentials
