@@ -1,5 +1,5 @@
 ### oxhack2020
-# PaperSnap: Leave your tablet behind
+# PaperSnap: Leave your stylus behind
 
 ## Setup instructions:
 1. **Clone the repository**
@@ -12,3 +12,7 @@
 8. **profit**
 
 *_requires dotenv setup, an Azure Computer Vision endpoint, a MongoDB database and respective credentials
+
+## Key contributors
+
+Ben, Jay, Pawit, Will
