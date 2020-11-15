@@ -1,4 +1,5 @@
-# oxhack2020
+### oxhack2020
+# PaperSnap: Leave your tablet behind
 
 ## Setup instructions:
 1. **Clone the repository**
